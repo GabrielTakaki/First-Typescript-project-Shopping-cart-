@@ -1,25 +1,64 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useState } from 'react';
+import { useQuery } from 'react-query';
+// Components
+import Item from './Item/Item';
+import Drawer from '@material-ui/core/Drawer';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Grid from '@material-ui/core/Grid';
+import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
+import Badge from '@material-ui/core/Badge';
+// Styles
+import { Wrapper, StyledButton } from './App.styles';
+// Types
+export type CartItemType = {
+  id: number;
+  category: string;
+  description: string;
+  image: string;
+  price: number;
+  title: string;
+  amount: number;
+};
+
+
+const getProducts = async () : Promise<CartItemType[]> => await (await fetch('https://fakestoreapi.com/products')).json();
+
 
 function App() {
+  const [cartOpen, setCartOpen] = useState(false);
+  const [cartItems, setCartItems] = useState([] as CartItemType[]);
+  const { data, isLoading, error } = useQuery<CartItemType[]>('products', getProducts);
+
+  const handleAddToCart = (item: CartItemType) => {
+    setCartItems([...cartItems, item]);
+  };
+
+  const handleRemoveFromCart = (itemId: CartItemType) => {
+    setCartItems(cartItems.filter(item => item !== itemId));
+  };
+
+  if (isLoading) return <LinearProgress />;
+  if (error) return <div>Something went Wrong....</div>;
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Wrapper>
+      <Drawer anchor='right' open={ cartOpen } onClose={() => setCartOpen(false)}>
+        {cartItems.length > 0 ? cartItems.map((item) => (
+          <Grid item key={ item.id } xs={ 12 } sm={ 6 }>
+           <Item btnFunc="Remove item" item={ item } handleAddToCart={ handleRemoveFromCart } />
+         </Grid>
+        )) : <h3>Cart is empty</h3>}
+      </Drawer>
+      <StyledButton onClick={() => setCartOpen(true) }>
+        <Badge badgeContent={ cartItems.length }><AddShoppingCartIcon /></Badge>
+      </StyledButton>
+      <Grid container spacing={ 3 }>
+        {data ? data.map(item => (
+          <Grid item key={ item.id } xs={ 12 } sm={ 4 }>
+            <Item btnFunc="Add to cart" item={ item } handleAddToCart={ handleAddToCart } />
+          </Grid>
+        )) : ''}
+      </Grid>
+    </Wrapper>
   );
 }
 
