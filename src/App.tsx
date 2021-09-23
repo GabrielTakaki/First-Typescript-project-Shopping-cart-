@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 // Components
+import Aside from './Cart/Cart';
 import Item from './Item/Item';
 import Drawer from '@material-ui/core/Drawer';
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -8,7 +9,7 @@ import Grid from '@material-ui/core/Grid';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import Badge from '@material-ui/core/Badge';
 // Styles
-import { Wrapper, StyledButton } from './App.styles';
+import { Wrapper, StyledButton, StyledWrapper } from './App.styles';
 // Types
 export type CartItemType = {
   id: number;
@@ -34,7 +35,7 @@ function App() {
   };
 
   const handleRemoveFromCart = (itemId: CartItemType) => {
-    setCartItems(cartItems.filter(item => item !== itemId));
+    setCartItems(cartItems.filter((item) => item !== itemId));
   };
 
   if (isLoading) return <LinearProgress />;
@@ -42,13 +43,15 @@ function App() {
   return (
     <Wrapper>
       <Drawer anchor='right' open={ cartOpen } onClose={() => setCartOpen(false)}>
-        <Grid container spacing={ 2 }>
-          {cartItems.length > 0 ? cartItems.map((item) => (
-            <Grid item key={ item.id } xs={ 4 } sm={ 2 }>
-            <Item btnFunc="Remove item" item={ item } handleAddToCart={ handleRemoveFromCart } />
+        <StyledWrapper>
+          <Grid container spacing={ 1 }>
+            {cartItems.length > 0 ? cartItems.map((item) => (
+              <Grid item key={ item.id } sm={ 6 } xs={ 12 }>   
+                <Aside btnFunc="Remove item" item={ item } handleRemoveFromCart={ handleRemoveFromCart } />
+              </Grid>
+            )) : <h4>Cart is empty</h4>}
           </Grid>
-          )) : <h3>Cart is empty</h3>}
-        </Grid>
+        </StyledWrapper>
       </Drawer>
       <StyledButton onClick={() => setCartOpen(true) }>
         <Badge badgeContent={ cartItems.length }><AddShoppingCartIcon /></Badge>
