@@ -42,11 +42,13 @@ function App() {
   return (
     <Wrapper>
       <Drawer anchor='right' open={ cartOpen } onClose={() => setCartOpen(false)}>
-        {cartItems.length > 0 ? cartItems.map((item) => (
-          <Grid item key={ item.id } xs={ 12 } sm={ 6 }>
-           <Item btnFunc="Remove item" item={ item } handleAddToCart={ handleRemoveFromCart } />
-         </Grid>
-        )) : <h3>Cart is empty</h3>}
+        <Grid container spacing={ 2 }>
+          {cartItems.length > 0 ? cartItems.map((item) => (
+            <Grid item key={ item.id } xs={ 4 } sm={ 2 }>
+            <Item btnFunc="Remove item" item={ item } handleAddToCart={ handleRemoveFromCart } />
+          </Grid>
+          )) : <h3>Cart is empty</h3>}
+        </Grid>
       </Drawer>
       <StyledButton onClick={() => setCartOpen(true) }>
         <Badge badgeContent={ cartItems.length }><AddShoppingCartIcon /></Badge>
