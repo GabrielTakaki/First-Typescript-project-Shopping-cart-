@@ -2,4 +2,4 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-Small little project using Typescript and Styled-Components to develop my skills.
+Small project using Typescript and Styled-Components to develop my skills.
